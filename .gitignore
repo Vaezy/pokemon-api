@@ -1,0 +1,11 @@
+node_modules/
+logs
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.env
+dist/
+build/
+coverage/
+.nodemon
