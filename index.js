@@ -1,23 +1,26 @@
-const express = require("express");
+import express from "express";
+import morgan from "morgan";
+import authMdlr from "./src/auth/auth.js";
+import { initDb } from "./src/db/sequelize.js";
+import { pokemonRoutes } from "./src/routes/pokemons-routes.js";
+import { userRoutes } from "./src/routes/users-routes.js";
+
 const app = express();
-const pokemons = require("./mock-pokemon");
+const port = 3000;
 
-const PORT = 3000;
+app.use(morgan("dev"));
+app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Application web Pokémon");
+initDb();
+
+userRoutes(app);
+pokemonRoutes(app, authMdlr);
+
+app.use(({ res }) => {
+  const message = "Erreur. Essayez une autre URL.";
+  res.status(404).json({ message });
 });
 
-app.get("/api/pokemon", (req, res) => {
-  res.send(pokemons);
-});
-
-app.get("/api/pokemon/:id", (req, res) => {
-  let id = parseInt(req.params.id);
-  const pokemon = pokemons.find((pokemon) => pokemon.id === id);
-  res.send(`Vous avez demandé le Pokémon ${pokemon.name}`);
-});
-
-app.listen(PORT, () => {
-  console.log(`http://localhost:${PORT}`);
-});
+app.listen(port, () =>
+  console.log(`Application démarrée sur : http://localhost:${port}`),
+);
